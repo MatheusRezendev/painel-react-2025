@@ -1,34 +1,63 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useState, useEffect } from 'react'
+import axios from 'axios'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [personagens, setPersonagem] = useState([])
+
+    useEffect(() =>{
+      axios.get("https://dragonball-api.com/api/characters")
+        .then(resposta => {
+
+          const personagem = resposta.data.items
+
+          setPersonagem(personagem)
+        })
+    },[])
+
+  const [planetas, setPlanetas] = useState([]) 
+
+    useEffect(() =>{
+      axios.get("https://dragonball-api.com/api/planets")
+        .then(resposta => {
+
+          const planeta = resposta.data.items.map(item => item.name)
+
+          setPlanetas(planetas)
+        })
+    },[])
+
+  const [transformacao, setTransformacao] = useState([]) 
+    
+    useEffect(() =>{
+      axios.get("https://dragonball-api.com/api/transformations")
+        .then(resposta => {
+
+          const transformacoes = resposta.data.map(item => item.name)
+
+          setTransformacao(transformacoes)
+        })
+    },[])
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="container mt-4">
+      <h1 className="mb-4">Personagens de Dragon Ball</h1>
+      <div className="row">
+        {
+          personagens.map(personagem => (
+            <div key={personagem.id} className="col-md-4 mb-3">
+              <div className="card">
+                <img src={personagem.image} className="card-img-top" alt={personagem.name} />
+                <div className="card-body">
+                  <h5 className="card-title">{personagem.name}</h5>
+                  <p className="card-text">Raça: {personagem.image}</p>
+                </div>
+              </div>
+            </div>
+          ))
+        }
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    </div>
   )
 }
 
