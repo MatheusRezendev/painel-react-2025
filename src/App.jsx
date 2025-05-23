@@ -5,6 +5,7 @@ import './App.css';
 function App() {
   const [personagens, setPersonagem] = useState([]);
   const [personagensFiltrados, setPersonagensFiltrados] = useState([]);
+  const [detalhesVisiveis, setDetalhesVisiveis] = useState([]);
 
   // Função para filtrar personagens
   const filtrarPersonagens = (filtro) => {
@@ -12,7 +13,7 @@ function App() {
       setPersonagensFiltrados(personagens);
     } else {
       setPersonagensFiltrados(
-        personagens.filter(personagem => 
+        personagens.filter(personagem =>
           personagem.race?.toLowerCase().includes(filtro.toLowerCase())
         )
       );
@@ -43,7 +44,7 @@ function App() {
     <>
       <div className="container mt-4">
         <h1 className="titulo mb-4">Personagens de Dragon Ball Z</h1>
-        
+
         {/* Botões de Filtro */}
         <div className="d-flex gap-2 mb-4">
           <button className="btn btn-primary" onClick={() => filtrarPersonagens('todos')}>
@@ -65,7 +66,7 @@ function App() {
             Mostrar Humano
           </button>
         </div>
-  
+
         {/* Carrossel */}
         {personagensFiltrados.length > 0 ? (
           <div id="personagensCarousel" className="carousel slide" data-bs-interval="false" data-bs-ride="false">
@@ -80,7 +81,7 @@ function App() {
                 />
               ))}
             </div>
-  
+
             <div className="carousel-inner">
               {Array.from({ length: totalGrupos }, (_, grupo) => (
                 <div key={grupo} className={`carousel-item ${grupo === 0 ? 'active' : ''}`}>
@@ -101,11 +102,21 @@ function App() {
                             <p className="card-text text-light">Genêro: {personagem.gender || 'Não informado'}</p>
                             <p className="card-text text-light">Afiliação: {personagem.affiliation || 'Não informado'}</p>
                             <button
-                              onClick={() => window.location.href = `https://dragonball-api.com/api/characters/${personagem.id}`}
                               className="btn btn-primary mt-3"
+                              onClick={() =>
+                                setDetalhesVisiveis(prev => ({
+                                  ...prev,
+                                  [personagem.id]: !prev[personagem.id]
+                                }))
+                              }
                             >
-                              Ver Mais
+                              {detalhesVisiveis[personagem.id] ? 'Ocultar' : 'Ver Mais'}
                             </button>
+                            {detalhesVisiveis[personagem.id] && (
+                              <div className="mt-3 text-light">
+                                <p>Descricao: {personagem.description}</p>
+                              </div>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -114,7 +125,7 @@ function App() {
                 </div>
               ))}
             </div>
-  
+
             <button className="carousel-control-prev" type="button" data-bs-target="#personagensCarousel" data-bs-slide="prev">
               <span className="carousel-control-prev-icon" aria-hidden="true"></span>
               <span className="visually-hidden">Anterior</span>
